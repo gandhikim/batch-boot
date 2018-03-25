@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<!--  util:properties id="config"
+		location="classpath:properties/server-config.batch.properties" / -->
+	 
+	 <util:properties id="config"
+		location="classpath:properties/server-config.${demonEnv:loc}.properties" />
+		
+	<task:scheduled-tasks scheduler="myScheduler">
+	
+		<task:scheduled ref="scheduledTasks" 
+						method="reportCurrentTime1"
+						initial-delay="3000"
+						fixed-delay="5000" />
+						
+		<task:scheduled ref="scheduledTasks" 
+						method="reportCurrentTime2"
+						cron="#{config['batch.test.time']}" />
+
+		<!--task:scheduled ref="" 
+						method=""
+						cron="업무일정제어"
+						fixed-delay="종료와 시작 사이의 시간" 
+						fixed-rate="시작과 시작 사이의 시간"
+						initial-delay="처음 한번만 실행되는 연기시간"
+						trigger=""
+						/>-->
+						 
+	</task:scheduled-tasks>
+	
+	<task:scheduler id="myScheduler" pool-size="10"/>
+
+</beans>
+ 
